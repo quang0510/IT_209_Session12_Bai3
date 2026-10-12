@@ -1,0 +1,58 @@
+name: Multi-Environment CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  # =======================================================
+  # Job Deploy Staging: Kích hoạt khi push vào nhánh develop
+  # =======================================================
+  deploy-staging:
+    name: Deploy to Staging
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.example.com
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Staging
+        run: |
+          echo "🚀 ======================================"
+          echo "🚀 Deploying to STAGING Environment"
+          echo "🚀 Ref: ${{ github.ref }}"
+          echo "🚀 Commit: ${{ github.sha }}"
+          echo "🚀 ======================================"
+          echo "Executing staging deployment scripts..."
+          echo "Staging deployment completed successfully!"
+
+  # =======================================================
+  # Job Deploy Production: Kích hoạt khi push vào nhánh main
+  # Cần phê duyệt thủ công qua GitHub Environment Protection Rules
+  # =======================================================
+  deploy-prod:
+    name: Deploy to Production
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://api.prod.example.com
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Production
+        run: |
+          echo "🌟 ======================================"
+          echo "🌟 Deploying to PRODUCTION Environment"
+          echo "🌟 Ref: ${{ github.ref }}"
+          echo "🌟 Commit: ${{ github.sha }}"
+          echo "🌟 ======================================"
+          echo "Executing production deployment scripts..."
+          echo "Production deployment completed successfully!"
